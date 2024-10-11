@@ -1,0 +1,527 @@
+<template>
+  <div>
+    <!-- Start Header -->
+    <header id="mu-header" class="" role="banner">
+      <div class="container">
+        <nav class="navbar navbar-default mu-navbar">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button
+                type="button"
+                class="navbar-toggle collapsed"
+                data-toggle="collapse"
+                data-target="#bs-example-navbar-collapse-1"
+                aria-expanded="false"
+              >
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <!-- Text Logo -->
+              <a class="navbar-brand" href="#">Cupid'sConer</a>
+
+              <!-- Image Logo -->
+              <!-- <a class="navbar-brand" href="#"><img src="assets/images/logo.png"></a> -->
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div
+              class="collapse navbar-collapse"
+              id="bs-example-navbar-collapse-1"
+            >
+              <ul class="nav navbar-nav mu-menu navbar-right">
+                <li><router-link to="#home" style="font-weight: bold">HOME</router-link></li>
+                <li><router-link to="#services" style="font-weight: bold">SERVICES</router-link></li>
+                <li><router-link to="#team" style="font-weight: bold">TEAM</router-link></li>
+                <li><router-link to="#contact" style="font-weight: bold">CONTACT</router-link></li>
+                <li>
+                  <router-link to="/login" style="font-weight: bold"
+                    >LOGIN</router-link
+                  >
+                </li>
+              </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+          </div>
+          <!-- /.container-fluid -->
+        </nav>
+      </div>
+    </header>
+    <!-- End Header -->
+
+    <!-- Start Featured Slider -->
+
+    <section id="mu-featured-slider">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mu-featured-area">
+              <h1>Welcome To Cupid's Corner</h1>
+
+              <div class="mu-featured-content">
+                <p>
+                  Welcome to Cupid's Corner, where love stories begin and hearts
+                  find their perfect match. We're thrilled to have you here!
+                  Dive in, explore, and let us help you connect with someone
+                  special. Your journey to love starts now!
+                </p>
+                <router-link
+                  to="/register"
+                  class="mu-primary-btn view-my-work-btn"
+                  title="register/sign-up"
+                  >Get Started</router-link
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Start Featured Slider -->
+
+    <!-- Start main content -->
+
+    <main role="main">
+      <!-- Start Service -->
+      <section id="home" style="background-color: #fff;">
+        <div class="container">
+          <div class="row">
+            <div  id="services" class="col-md-12">
+              <div class="mu-service-area">
+                <div class="mu-service-header" style="margin-top: 40px">
+                  <h2 class="mu-heading-title">What We Offer</h2>
+                  <span class="mu-header-dot"></span>
+                  <p>
+                    Discover the amazing features that Cupid's Corner provides
+                    to help you find your perfect match.
+                  </p>
+                </div>
+
+                <!-- Start Service Content -->
+                <div class="mu-service-content">
+                  <div class="row">
+                    <!-- Service Single Content -->
+                    <div class="col-md-4 col-sm-6">
+                      <div
+                        class="mu-service-content-single"
+                        style="background-color: #e44063; border-radius: 18px"
+                      >
+                        <span
+                          class="mu-service-icon-box"
+                          style="border-color: #ffff; color: #ffff"
+                        >
+                          <i class="fa-solid fa-heart"></i>
+                        </span>
+                        <h4 style="color: #ffff">Personalized Matchmaking</h4>
+                        <p style="color: #ffff">
+                          Our advanced algorithms analyze your preferences and
+                          interests to connect you with compatible matches.
+                          Discover meaningful connections tailored just for you.
+                        </p>
+                      </div>
+                    </div>
+                    <!-- / Service Single Content -->
+
+                    <!-- Service Single Content -->
+                    <div class="col-md-4 col-sm-6">
+                      <div
+                        class="mu-service-content-single"
+                        style="background-color: #e44063; border-radius: 18px"
+                      >
+                        <span
+                          class="mu-service-icon-box"
+                          style="border-color: #ffff; color: #ffff"
+                        >
+                          <i class="fa-solid fa-shield"></i>
+                        </span>
+                        <h4 style="color: #ffff">Profile Verification</h4>
+                        <p style="color: #ffff">
+                          Safety is our priority. We verify profiles to ensure
+                          you interact with genuine people, creating a
+                          trustworthy and secure environment for everyone.
+                        </p>
+                      </div>
+                    </div>
+                    <!-- / Service Single Content -->
+
+                    <!-- Service Single Content -->
+                    <div class="col-md-4 col-sm-6">
+                      <div
+                        class="mu-service-content-single"
+                        style="background-color: #e44063; border-radius: 18px"
+                      >
+                        <span
+                          class="mu-service-icon-box"
+                          style="border-color: #ffff; color: #ffff"
+                        >
+                          <i class="fa-solid fa-user"></i>
+                        </span>
+                        <h4 style="color: #ffff">In-Depth Profiles</h4>
+                        <p style="color: #ffff">
+                          Get to know potential matches better with detailed
+                          profiles that include interests, hobbies, and personal
+                          stories. Find someone who truly resonates with you.
+                        </p>
+                      </div>
+                    </div>
+                    <!-- / Service Single Content -->
+
+                    <!-- Service Single Content -->
+                    <div class="col-md-4 col-sm-6">
+                      <div
+                        class="mu-service-content-single"
+                        style="background-color: #e44063; border-radius: 18px"
+                      >
+                        <span
+                          class="mu-service-icon-box"
+                          style="border-color: #ffff; color: #ffff"
+                        >
+                          <i class="fa-solid fa-comment"></i>
+                        </span>
+                        <h4 style="color: #ffff; margin-top: 20px">
+                          Instant Messaging
+                        </h4>
+                        <p style="color: #ffff">
+                          Communicate effortlessly with our real-time messaging
+                          feature. Share your thoughts, plan dates, and build
+                          connections with ease.
+                        </p>
+                      </div>
+                    </div>
+                    <!-- / Service Single Content -->
+
+                    <!-- Service Single Content -->
+                    <div class="col-md-4 col-sm-6">
+                      <div
+                        class="mu-service-content-single"
+                        style="background-color: #e44063; border-radius: 18px"
+                      >
+                        <span
+                          class="mu-service-icon-box"
+                          style="border-color: #ffff; color: #ffff"
+                        >
+                          <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <h4 style="color: #ffff">Privacy Controls</h4>
+                        <p style="color: #ffff">
+                          Your privacy matters. Customize your privacy settings
+                          to control who can see your profile and interact with
+                          you, ensuring a comfortable experience.
+                        </p>
+                      </div>
+                    </div>
+                    <!-- / Service Single Content -->
+
+                    <!-- Service Single Content -->
+                    <div class="col-md-4 col-sm-6">
+                      <div
+                        class="mu-service-content-single"
+                        style="background-color: #e44063; border-radius: 18px"
+                      >
+                        <span
+                          class="mu-service-icon-box"
+                          style="border-color: #ffff; color: #ffff"
+                        >
+                          <i class="fa-solid fa-headset"></i>
+                        </span>
+                        <h4 style="color: #ffff">24/7 Support</h4>
+                        <p style="color: #ffff">
+                          Our dedicated support team is available around the
+                          clock to assist you with any questions or concerns.
+                          We’re here to help you every step of the way
+                        </p>
+                        <p id="team"></p>
+                      </div>
+                    </div>
+                    <!-- / Service Single Content -->
+                  </div>
+                </div>
+                <!-- End Service Content -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Service -->
+
+      <!-- Team Section -->
+      <section class="team section" style="background-color: #fff;">
+        <!-- Section Title -->
+        <div class="mu-service-header" style="margin-bottom: 80px">
+          <h2 class="mu-heading-title">Meet Our Team</h2>
+          <span class="mu-header-dot"></span>
+          <p>
+            Our team is dedicated to helping you find your perfect match.<br />
+            With ablend of expertise and passion, we work tirelessly to ensure
+            your experience is seamless and enjoyable.
+          </p>
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container">
+          <div class="row gy-4">
+            <!-- Team Member -->
+            <div class="col-md-6 col-sm-12">
+              <div
+                class="team-member"
+                style="background-color: #e44063; padding: 20px"
+              >
+                <div class="member-info" style="color: #fff">
+                  <h4>Thato Mokoena</h4>
+                  <span>Developer</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <!-- Team Member -->
+            <div class="col-md-6 col-sm-12">
+              <div
+                class="team-member"
+                style="background-color: #e44063; padding: 20px"
+              >
+                <div class="member-info" style="color: #fff">
+                  <h4>Leonard Langa</h4>
+                  <span>Developer</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <!-- Team Member -->
+            <div class="col-md-6 col-sm-12">
+              <div
+                class="team-member"
+                style="
+                  background-color: #e44063;
+                  padding: 20px;
+                  margin-top: 10px;
+                "
+              >
+                <div class="member-info" style="color: #fff">
+                  <h4>Braedon Mullins</h4>
+                  <span>Developer</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <!-- Team Member -->
+            <div class="col-md-6 col-sm-12">
+              <div
+                class="team-member"
+                style="
+                  background-color: #e44063;
+                  padding: 20px;
+                  margin-top: 10px;
+                "
+              >
+                <div class="member-info" style="color: #fff">
+                  <h4>Uzziah Ngogela</h4>
+                  <span>Developer</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <!-- Team Member -->
+            <div class="col-md-6 col-sm-12">
+              <div
+                class="team-member"
+                style="
+                  background-color: #e44063;
+                  padding: 20px;
+                  margin-top: 10px;
+                "
+              >
+                <div class="member-info" style="color: #fff">
+                  <h4>Mihle Bontsi</h4>
+                  <span>Developer</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <!-- Team Member -->
+            <div class="col-md-6 col-sm-12">
+              <div
+                class="team-member"
+                style="
+                  background-color: #e44063;
+                  padding: 20px;
+                  margin-top: 10px;
+                "
+              >
+                <div class="member-info" style="color: #fff">
+                  <h4>Nasiphi Sunduza</h4>
+                  <span id="contact">Developer</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+          </div>
+        </div>
+      </section>
+
+      <!-- /Team Section -->
+
+      <section style="background-color: #fff;">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="mu-contact-area">
+                <div class="mu-contact-header">
+                  <h2 class="mu-heading-title">CONTACT US</h2>
+                  <span class="mu-header-dot"></span>
+                  <p>
+                    Have questions or need assistance? We're here to help! Reach
+                    out to us for any inquiries, support, or feedback. Our team
+                    is dedicated to providing you with the best experience
+                    possible. Feel free to contact us through the form below or
+                    via our social media channels.
+                  </p>
+                </div>
+
+                <div class="mu-contact-content">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="mu-contact-top">
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <div class="mu-contact-top-single">
+                              <div class="mu-icon">
+                                <i class="fa fa-map-marker"></i>
+                              </div>
+                              <p>CPUT, Cape Town, SA</p>
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <div class="mu-contact-top-single">
+                              <div class="mu-icon">
+                                <i class="fa fa-phone"></i>
+                              </div>
+                              <p>+27 72 776 2597</p>
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <div class="mu-contact-top-single">
+                              <div class="mu-icon">
+                                <i class="fa fa-envelope"></i>
+                              </div>
+                              <p>support@domain.com</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <div class="mu-contact-bottom">
+                        <div id="form-messages"></div>
+                        <form
+                          id="ajax-contact"
+                          method="post"
+                          action="mailer.php"
+                          class="mu-contact-form"
+                        >
+                          <div class="form-group">
+                            <input
+                              type="text"
+                              class="form-control"
+                              placeholder="Name"
+                              id="name"
+                              name="name"
+                              required
+                            />
+                          </div>
+                          <div class="form-group">
+                            <input
+                              type="email"
+                              class="form-control"
+                              placeholder="Enter Email"
+                              id="email"
+                              name="email"
+                              required
+                            />
+                          </div>
+                          <div class="form-group">
+                            <textarea
+                              class="form-control"
+                              placeholder="Message"
+                              id="message"
+                              name="message"
+                              required
+                            ></textarea>
+                          </div>
+                          <button type="submit" class="mu-send-msg-btn">
+                            <span>SUBMIT</span>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- End main content -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: "HelloWorld",
+};
+</script>
+
+<style scoped>
+.team-member {
+  /* background-color: #d1d1d1; */
+  /* border-radius: 18px; */
+  /* padding: 20px; */
+  text-align: center;
+  color: #fff;
+}
+
+.team-member .pic {
+  margin-bottom: 15px;
+}
+
+.team-member .pic img {
+  border-radius: 50%;
+}
+
+.team-member .member-info h4 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.team-member .member-info span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #fff;
+}
+
+.team-member .member-info p {
+  font-size: 14px;
+  color: #fff;
+}
+
+.team-member .social a {
+  margin: 0 5px;
+  color: #fff;
+}
+
+.team-member .social a:hover {
+  color: #d12f54;
+}
+</style>

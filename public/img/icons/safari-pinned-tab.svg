@@ -1,0 +1,9 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+	<title>favicon</title>
+	<defs>
+		<image  width="16" height="16" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAAXNSR0IB2cksfwAAAAlQTFRFAAAABwcH0jd2Fv2osgAAADZJREFUeJxjFJvC8IqRdSnDMkbGTPvpjAxR3tGMDGJ1OYwMrN4bGBkY7Q8wMgABQYKDA0T8AAAIPAlFWv2R6AAAAABJRU5ErkJggg=="/>
+	</defs>
+	<style>
+	</style>
+	<use id="Background" href="#img1" x="0" y="0"/>
+</svg>
