@@ -21,7 +21,14 @@
               id="bs-example-navbar-collapse-1"
             >
               <ul class="nav navbar-nav mu-menu navbar-right">
-                <li><h6 style="color: #fff; justify-content: center;">Welcome: <i><span style="color: #000; margin-left: 10px;">{{this.$route.query.userName}}</span></i></h6></li>
+                <li style="margin-top: 10px; margin-right: 20px;"><h6 style="color: #fff; display: inline;">Welcome: <i><span style="color: #000; margin-left: 10px;">{{this.$route.query.userName}}</span></i></h6></li>
+                <li>
+                  <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-primary navbar-btn" style="margin-left: 15px;">
+                      Log Out
+                    </button>
+                  </form>
+                </li>
               </ul>
             </div>
           </div>

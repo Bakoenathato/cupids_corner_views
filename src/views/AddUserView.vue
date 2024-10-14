@@ -15,10 +15,10 @@
         <div class="row">
           <div class="col-12 text-center">
             <h1 class="my-4" style="margin-top: 20px; margin-bottom: 20px">
-              Register
+              Add User
             </h1>
             <p style="font-size: 13px; margin-top: 10px">
-              Create a new account below
+              Create a new user profile
             </p>
           </div>
         </div>
@@ -67,9 +67,23 @@
                   style="width: 75%"
                   required
                 >
-                  <option value="" disabled selected>Select an option</option>
+                  <option value="" disabled selected>Gender</option>
                   <option value="MALE">Male</option>
                   <option value="FEMALE">Female</option>
+                </select>
+              </div>
+              <div>
+                <select
+                  id="role"
+                  name="role"
+                  v-model="role"
+                  class="new-style"
+                  style="width: 75%"
+                  required
+                >
+                  <option value="" disabled selected>Role</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="USER">User</option>
                 </select>
               </div>
               <div>
@@ -107,18 +121,14 @@
                 />
               </div>
               <div class="text-center">
-                <button type="submit" class="btn btn-primary w-50">
-                  Register
+                <button
+                  type="submit"
+                  class="btn btn-primary w-50"
+                  style="margin-bottom: 30px"
+                >
+                  Add User
                 </button>
               </div>
-              <p class="mt-3 text-center" style="font-size: 11px">
-                Already have an account?
-                <router-link
-                  to="/login"
-                  style="color: blue; text-decoration: underline"
-                  >Login</router-link
-                >
-              </p>
             </form>
           </div>
         </div>
@@ -131,7 +141,7 @@
 import axios from "axios";
 
 export default {
-  name: "RegisterView",
+  name: "AddUserView",
   data() {
     return {
       users: [],
@@ -141,7 +151,7 @@ export default {
       email: "",
       password: "",
       gender: "",
-      role: "USER",
+      role: "",
       image: null,
     };
   },
@@ -171,7 +181,7 @@ export default {
       });
     },
     async createUser(event) {
-      if (!window.confirm("Confirm registration")) {
+      if (!window.confirm("Are you sure you want to add this user?")) {
         return; // If user clicks "Cancel", exit the function
       }
 
@@ -205,15 +215,25 @@ export default {
         this.users = res.data;
         console.log(res.data);
         console.log(usersData);
-        alert("Registration successful!");
-        this.$router.push({ name: "LoginView" });
+        alert("User Successfully Added");
+
+        this.name = "";
+        this.surname = "";
+        this.username = "";
+        this.email = "";
+        this.password = "";
+        this.gender = "";
+        this.role = "";
+        this.image = null;
+        document.getElementById("displayImage").value = "";
+        //   this.$router.push({ name: "LoginView" });
       } catch (error) {
         if (error.response && error.response.status === 400) {
           alert("Invalid Email");
         } else {
           console.error("Error creating user:", error);
           alert(
-            "An error occurred during registration. Please try again later."
+            "An error occurred during user creation. Please try again later."
           );
         }
       }

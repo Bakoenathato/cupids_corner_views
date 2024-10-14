@@ -15,16 +15,16 @@
         <div class="row">
           <div class="col-12 text-center">
             <h1 class="my-4" style="margin-top: 20px; margin-bottom: 20px">
-              Register
+              Edit User
             </h1>
             <p style="font-size: 13px; margin-top: 10px">
-              Create a new account below
+              Edit user profile details
             </p>
           </div>
         </div>
         <div class="registration-form">
           <div class="col-md-6">
-            <form @submit.prevent="createUser">
+            <form @submit.prevent="updateUser">
               <div>
                 <input
                   type="text"
@@ -67,9 +67,23 @@
                   style="width: 75%"
                   required
                 >
-                  <option value="" disabled selected>Select an option</option>
+                  <option value="" disabled selected>Gender</option>
                   <option value="MALE">Male</option>
                   <option value="FEMALE">Female</option>
+                </select>
+              </div>
+              <div>
+                <select
+                  id="role"
+                  name="role"
+                  v-model="role"
+                  class="new-style"
+                  style="width: 75%"
+                  required
+                >
+                  <option value="" disabled selected>Role</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="USER">User</option>
                 </select>
               </div>
               <div>
@@ -91,7 +105,24 @@
                   id="password"
                   placeholder="Password"
                   style="width: 75%"
-                  required
+                  readonly
+                  title="read-only"
+                />
+              </div>
+              <div
+                v-if="imagePreview"
+                class="text-center"
+                style="margin-top: 20px"
+              >
+                <img
+                  :src="imagePreview"
+                  alt="Current Profile Image"
+                  style="
+                    max-width: 150px;
+                    max-height: 150px;
+                    border-radius: 50%;
+                    margin-bottom: 10px;
+                  "
                 />
               </div>
               <div>
@@ -103,22 +134,17 @@
                   accept="image/*"
                   class="new-style-file"
                   style="width: 75%"
-                  required
                 />
               </div>
               <div class="text-center">
-                <button type="submit" class="btn btn-primary w-50">
-                  Register
+                <button
+                  type="submit"
+                  class="btn btn-primary w-50"
+                  style="margin-bottom: 30px"
+                >
+                  Save Changes
                 </button>
               </div>
-              <p class="mt-3 text-center" style="font-size: 11px">
-                Already have an account?
-                <router-link
-                  to="/login"
-                  style="color: blue; text-decoration: underline"
-                  >Login</router-link
-                >
-              </p>
             </form>
           </div>
         </div>
@@ -131,35 +157,58 @@
 import axios from "axios";
 
 export default {
-  name: "RegisterView",
+  name: "EditUserView",
   data() {
     return {
-      users: [],
+      id: this.$route.query.id, // Get userId from route params
       name: "",
       surname: "",
       username: "",
       email: "",
       password: "",
       gender: "",
-      role: "USER",
+      role: "",
       image: null,
+      imagePreview: null,
+      storedPassword: "",
     };
   },
   methods: {
-    async fetchUsers() {
+    async fetchUserDetails() {
       try {
         const res = await axios.get(
-          "http://localhost:8080/capstonecupid/user/getall"
+          `http://localhost:8080/capstonecupid/user/read/${this.id}`
         );
-        this.users = res.data;
-        console.log(res.data);
+        const user = res.data;
+
+        // Populate form fields
+        this.name = user.firstName;
+        this.surname = user.lastName;
+        this.username = user.userName;
+        this.email = user.email;
+        this.gender = user.gender;
+        this.role = user.userRole;
+        this.password = user.password;
+        this.storedPassword = user.password;
+
+        // Set the image preview
+        if (user.displayImage) {
+          this.imagePreview = `data:image/jpeg;base64,${user.displayImage}`; // Assuming the image is stored in base64
+        }
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching user details:", error);
       }
     },
     handleImageChange(event) {
       if (event.target.files.length > 0) {
         this.image = event.target.files[0];
+
+        // Show a preview of the selected image
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.imagePreview = e.target.result; // Set the image preview as base64
+        };
+        reader.readAsDataURL(this.image); // Convert file to base64 URL
       }
     },
     convertToBase64(file) {
@@ -170,57 +219,56 @@ export default {
         reader.readAsDataURL(file);
       });
     },
-    async createUser(event) {
-      if (!window.confirm("Confirm registration")) {
-        return; // If user clicks "Cancel", exit the function
+    async updateUser(event) {
+      const confirmed = confirm(
+        "Are you sure you want to update this user's information?"
+      );
+
+      if (!confirmed) {
+        return;
       }
 
       let hexImage = null;
       if (this.image) {
-        hexImage = await this.convertToBase64(this.image);
+        hexImage = await this.convertToBase64(this.image); // Convert new image to base64
+      } else if (this.imagePreview) {
+        // Use the existing image preview if no new image is selected
+        hexImage = this.imagePreview.split(",")[1]; // Extract base64 part from data URL
       }
 
-      const usersData = {
+      const updatedUserData = {
+        id: this.$route.query.id,
         firstName: this.name,
         lastName: this.surname,
         userName: this.username,
         email: this.email,
-        password: this.password,
         gender: this.gender,
         userRole: this.role,
-        displayImage: hexImage,
+        password: this.storedPassword,
+        displayImage: hexImage, // Send the base64-encoded image if available
       };
 
       try {
         const res = await axios.post(
-          "http://localhost:8080/capstonecupid/user/create",
-          usersData,
+          "http://localhost:8080/capstonecupid/user/update",
+          updatedUserData,
           {
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
-
-        this.users = res.data;
-        console.log(res.data);
-        console.log(usersData);
-        alert("Registration successful!");
-        this.$router.push({ name: "LoginView" });
+        console.log("User updated:", res.data);
+        alert("User successfully updated");
+        this.$router.push({ name: "AdminView", query: { id: this.$route.query.adminId, userName: this.$route.query.adminUserName } });
       } catch (error) {
-        if (error.response && error.response.status === 400) {
-          alert("Invalid Email");
-        } else {
-          console.error("Error creating user:", error);
-          alert(
-            "An error occurred during registration. Please try again later."
-          );
-        }
+        console.error("Error updating user:", error);
+        alert("An error occurred while updating the user.");
       }
     },
   },
   mounted() {
-    this.fetchUsers();
+    this.fetchUserDetails(); // Load user details when the component is mounted
   },
 };
 </script>
