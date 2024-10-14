@@ -3,6 +3,9 @@ import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import UserProfileView from "../views/UserProfileView.vue"
+import AdminView from "../views/AdminView.vue"
+import AddUserView from "../views/AddUserView.vue"
+import EditUserView from "../views/EditUserView.vue"
 
 const routes = [
   {
@@ -35,6 +38,21 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
+  {
+    path: "/dashboard",
+    name: "AdminView",
+    component: AdminView,
+  },
+  {
+    path: "/add-user",
+    name: "AddUserView",
+    component: AddUserView,
+  },
+  {
+    path: "/edit-user",
+    name: "EditUserView",
+    component: EditUserView,
+  }
 ];
 
 const router = createRouter({

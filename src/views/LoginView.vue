@@ -87,20 +87,27 @@ export default {
           "http://localhost:8080/capstonecupid/user/login",
           this.user
         );
-        console.log(response);
+        // console.log(response);
         const { data } = response;
-        console.log(data);
+        // console.log(data);
         if (data.message === "Email not exists") {
           alert("Email does not exists");
         } else if (data.message === "Login Success") {
-          alert("Login Success");
           const response = await axios.get(
             "http://localhost:8080/capstonecupid/user/getall"
           );
          
           const loggedInUser = response.data.find(u => u.email === this.user.email && u.password === this.user.password);
-            
-          this.$router.push({ name: "UserProfileView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
+          console.log(loggedInUser);
+
+          if (loggedInUser.userRole === "ADMIN"){
+            alert("Admin LogIn Successful");
+            this.$router.push({ name: "AdminView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
+          }
+          else{
+            alert("User LogIn Successful");
+            this.$router.push({ name: "UserProfileView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
+          }  
         } else {
           alert("Incorrect Email or Password not match");
         }
