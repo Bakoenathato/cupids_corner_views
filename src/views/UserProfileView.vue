@@ -22,6 +22,7 @@
             >
               <ul class="nav navbar-nav mu-menu navbar-right">
                 <li style="margin-top: 10px; margin-right: 20px;"><h6 style="color: #fff; display: inline;">Welcome: <i><span style="color: #000; margin-left: 10px;">{{this.$route.query.userName}}</span></i></h6></li>
+                <li><router-link to="/match" style="font-weight: bold">Matches</router-link></li>
                 <li>
                   <form action="/logout" method="POST" style="display: inline;">
                     <button type="submit" class="btn btn-primary navbar-btn" style="margin-left: 15px;">
@@ -89,56 +90,128 @@ export default {
   created() {
     this.fetchUsers();
   },
+  // methods: {
+  //   // async fetchUsers() {
+  //   //   try {
+  //   //     const id = Number(this.$route.query.id);
+
+  //   //     const response = await axios.get("http://localhost:8080/capstonecupid/user/getall");
+  //   //     this.users = response.data;
+  //   async fetchUsers() {
+  // try {
+  //   const id = Number(this.$route.query.id);
+  //   const token = localStorage.getItem("jwt-token"); 
+  //   const response = await axios.get("http://localhost:8080/capstonecupid/user/getall", {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`, 
+  //     },
+  //   });
+  //   this.users = response.data;
+
+  //       this.loggedInUser = this.users.find(user => user.id === id);
+
+  //       this.filteredUsers = this.users.filter(user => user.id !== this.loggedInUser.id && user.gender !== this.loggedInUser.gender);
+
+  //     } catch (error) {
+  //       console.error("Couldn't fetch users!", error);
+  //     }
+  //   },
+  //   swipeLeft(user) {
+  //     this.sendSwipeRequest(user, 'left');
+  //   },
+  //   swipeRight(user) {
+  //     this.sendSwipeRequest(user, 'right');
+  //   },
+  //   sendSwipeRequest(user, direction) {
+  //     const id = Number(this.$route.query.id);
+  //   const token = localStorage.getItem("jwt-token");
+
+  //     console.log('Swipe Data: ', {
+  //       user1Id: this.loggedInUser.id,
+  //       user2Id: user.id,
+  //       direction: direction
+  //     });
+
+  //     axios
+  //       .post('http://localhost:8080/capstonecupid/api/potential-match/process-swipe', {
+  //         user1Id: this.loggedInUser.id,
+  //         user2Id: user.id,
+  //         direction: direction,
+  //       }
+  //     )
+      
+  //       .then(response => {
+  //         if (response.data) {
+  //           console.log(`Match created with user: ${user.id}`);
+  //         } else {
+  //           console.log(`Swiped ${direction} on user: ${user.id}`);
+  //         }
+  //         // remove the swiped user from the list
+  //         this.users = this.users.filter(user => user.id !== user.id);
+  //       })
+  //       .catch(error => {
+  //         console.error(`There was an error swiping ${direction}!`, error)
+  //       });
+  //   }
+  // }
   methods: {
-    async fetchUsers() {
-      try {
-        const id = Number(this.$route.query.id);
+  async fetchUsers() {
+    try {
+      const id = Number(this.$route.query.id);
+      const token = localStorage.getItem("jwt-token"); 
+      const response = await axios.get("http://localhost:8080/capstonecupid/user/getall", {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      });
+      this.users = response.data;
 
-        const response = await axios.get("http://localhost:8080/capstonecupid/user/getall");
-        this.users = response.data;
+      this.loggedInUser = this.users.find(user => user.id === id);
+      this.filteredUsers = this.users.filter(user => user.id !== this.loggedInUser.id && user.gender !== this.loggedInUser.gender && user.userRole !== 'ADMIN');
 
-        this.loggedInUser = this.users.find(user => user.id === id);
+    } catch (error) {
+      console.error("Couldn't fetch users!", error);
+    }
+  },
+  swipeLeft(user) {
+    this.sendSwipeRequest(user, 'left');
+  },
+  swipeRight(user) {
+    this.sendSwipeRequest(user, 'right');
+  },
+  sendSwipeRequest(user, direction) {
+    const id = Number(this.$route.query.id);
+    const token = localStorage.getItem("jwt-token");
 
-        this.filteredUsers = this.users.filter(user => user.id !== this.loggedInUser.id && user.gender !== this.loggedInUser.gender);
+    console.log('Swipe Data: ', {
+      user1Id: this.loggedInUser.id,
+      user2Id: user.id,
+      direction: direction
+    });
 
-      } catch (error) {
-        console.error("Couldn't fetch users!", error);
-      }
-    },
-    swipeLeft(user) {
-      this.sendSwipeRequest(user, 'left');
-    },
-    swipeRight(user) {
-      this.sendSwipeRequest(user, 'right');
-    },
-    sendSwipeRequest(user, direction) {
-
-      console.log('Swipe Data: ', {
+    axios
+      .post('http://localhost:8080/capstonecupid/api/potential-match/process-swipe', {
         user1Id: this.loggedInUser.id,
         user2Id: user.id,
-        direction: direction
+        direction: direction,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      })
+      .then(response => {
+        if (response.data) {
+          console.log(`Match created with user: ${user.id}`);
+        } else {
+          console.log(`Swiped ${direction} on user: ${user.id}`);
+        }
+        this.users = this.users.filter(u => u.id !== user.id);
+      })
+      .catch(error => {
+        console.error(`There was an error swiping ${direction}!`, error);
       });
-
-      axios
-        .post('http://localhost:8080/capstonecupid/api/potential-match/process-swipe', {
-          user1Id: this.loggedInUser.id,
-          user2Id: user.id,
-          direction: direction,
-        })
-        .then(response => {
-          if (response.data) {
-            console.log(`Match created with user: ${user.id}`);
-          } else {
-            console.log(`Swiped ${direction} on user: ${user.id}`);
-          }
-          // remove the swiped user from the list
-          this.users = this.users.filter(user => user.id !== user.id);
-        })
-        .catch(error => {
-          console.error(`There was an error swiping ${direction}!`, error)
-        });
-    }
   }
+}
 };
 </script>
 

@@ -6,6 +6,8 @@ import UserProfileView from "../views/UserProfileView.vue"
 import AdminView from "../views/AdminView.vue"
 import AddUserView from "../views/AddUserView.vue"
 import EditUserView from "../views/EditUserView.vue"
+import MatchView from "../views/MatchView.vue";
+import AdminMatchView from "../views/AdminMatchView.vue";
 
 const routes = [
   {
@@ -49,10 +51,21 @@ const routes = [
     component: AddUserView,
   },
   {
+    path: "/match",
+    name: "MatchView",
+    component: MatchView,
+  },
+  {
+    path: "/Adminmatch",
+    name: "AdminMatchView",
+    component: AdminMatchView,
+  },
+  {
     path: "/edit-user",
     name: "EditUserView",
     component: EditUserView,
   }
+
 ];
 
 const router = createRouter({

@@ -160,7 +160,7 @@ export default {
   name: "EditUserView",
   data() {
     return {
-      id: this.$route.query.id, // Get userId from route params
+      id: this.$route.query.id, 
       name: "",
       surname: "",
       username: "",
@@ -176,12 +176,19 @@ export default {
   methods: {
     async fetchUserDetails() {
       try {
+        const token = localStorage.getItem("jwt-token"); 
+        console.log(token)
         const res = await axios.get(
-          `http://localhost:8080/capstonecupid/user/read/${this.id}`
-        );
+      `http://localhost:8080/capstonecupid/user/read/${this.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      }
+    );
         const user = res.data;
 
-        // Populate form fields
+        
         this.name = user.firstName;
         this.surname = user.lastName;
         this.username = user.userName;
@@ -191,9 +198,9 @@ export default {
         this.password = user.password;
         this.storedPassword = user.password;
 
-        // Set the image preview
+        
         if (user.displayImage) {
-          this.imagePreview = `data:image/jpeg;base64,${user.displayImage}`; // Assuming the image is stored in base64
+          this.imagePreview = `data:image/jpeg;base64,${user.displayImage}`; 
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -203,12 +210,12 @@ export default {
       if (event.target.files.length > 0) {
         this.image = event.target.files[0];
 
-        // Show a preview of the selected image
+        
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.imagePreview = e.target.result; // Set the image preview as base64
+          this.imagePreview = e.target.result; 
         };
-        reader.readAsDataURL(this.image); // Convert file to base64 URL
+        reader.readAsDataURL(this.image); 
       }
     },
     convertToBase64(file) {
@@ -230,10 +237,10 @@ export default {
 
       let hexImage = null;
       if (this.image) {
-        hexImage = await this.convertToBase64(this.image); // Convert new image to base64
+        hexImage = await this.convertToBase64(this.image); 
       } else if (this.imagePreview) {
-        // Use the existing image preview if no new image is selected
-        hexImage = this.imagePreview.split(",")[1]; // Extract base64 part from data URL
+        
+        hexImage = this.imagePreview.split(",")[1]; 
       }
 
       const updatedUserData = {
@@ -245,16 +252,18 @@ export default {
         gender: this.gender,
         userRole: this.role,
         password: this.storedPassword,
-        displayImage: hexImage, // Send the base64-encoded image if available
+        displayImage: hexImage, 
       };
 
       try {
+        const token = localStorage.getItem("jwt-token");
         const res = await axios.post(
           "http://localhost:8080/capstonecupid/user/update",
           updatedUserData,
           {
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -268,7 +277,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchUserDetails(); // Load user details when the component is mounted
+    this.fetchUserDetails(); 
   },
 };
 </script>
