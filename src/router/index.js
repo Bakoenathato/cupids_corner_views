@@ -23,11 +23,11 @@ const routes = [
     name: "RegisterView",
     component: RegisterView,
   },
-  {
-    path: "/logout",
-    name: "home",
-    component: HomeView,
-  },
+  // {
+  //   path: "/logout",
+  //   name: "home",
+  //   component: HomeView,
+  // },
   {
     path: "/user-profile",
     name: "UserProfileView",

@@ -90,6 +90,7 @@ export default {
     this.fetchUsers();
   },
   methods: {
+    
     async fetchUsers() {
       try {
         const id = Number(this.$route.query.id);
