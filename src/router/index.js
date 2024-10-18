@@ -24,6 +24,11 @@ const routes = [
     component: RegisterView,
   },
   {
+    path: "/logout",
+    name: "home",
+    component: HomeView,
+  },
+  {
     path: "/user-profile",
     name: "UserProfileView",
     component: UserProfileView,

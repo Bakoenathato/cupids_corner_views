@@ -63,6 +63,7 @@
                 <li>
                   <form action="/logout" method="POST" style="display: inline">
                     <button
+                    @click = "logout"
                       type="submit"
                       class="btn btn-primary navbar-btn"
                       style="margin-left: 15px"
@@ -161,7 +162,13 @@ export default {
   },
   methods: {
     fetchUsers() {
-      fetch("http://localhost:8080/capstonecupid/user/getall")
+      const token = localStorage.getItem("jwt-token");
+
+      fetch("http://localhost:8080/capstonecupid/user/getall", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           this.users = data;
@@ -203,6 +210,26 @@ export default {
           });
       }
     },
+
+    // async logout() {
+    //   const token = localStorage.getItem("jwt-token");
+
+    //   try {
+    //     await fetch("http://localhost:8080/capstonecupid/user/logout", {
+    //       method : 'POST', 
+    //       headers: {
+    //         Authorization: `Bearer ${token}`
+    //     },
+    //     });
+
+    //     // clear the jwt token from local storage
+    //     localStorage.removeItem('jwt-token');
+
+    //     this.$router.push("/");
+    //   } catch (error) {
+    //     console.error('Logout failed:', error);
+    //   }
+    // },
   },
 };
 </script>
