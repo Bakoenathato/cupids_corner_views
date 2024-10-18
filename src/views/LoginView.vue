@@ -24,15 +24,14 @@
         </div>
         <div class="login-form">
           <div>
-            <form @submit.prevent="LoginData">
+            <form @submit.prevent="loginUser">
               <div>
                 <input
-                  type="email"
+                  type="text"
                   class="new-style"
-                  v-model="user.email"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  placeholder="E-mail"
+                  v-model="user.userName"
+                  id="exampleInputUserName1"
+                  placeholder="User Name"
                   required
                 />
               </div>
@@ -69,53 +68,213 @@
 
 <script>
 import axios from "axios";
+import AuthService from "@/AuthService";
 
 export default {
   name: "LoginView",
   data() {
     return {
       user: {
-        email: "",
+        userName: "",
         password: "",
       },
     };
   },
   methods: {
-    async LoginData() {
+    async loginUser() {
       try {
-        const response = await axios.post(
-          "http://localhost:8080/capstonecupid/user/login",
-          this.user
-        );
-        // console.log(response);
-        const { data } = response;
-        // console.log(data);
-        if (data.message === "Email not exists") {
-          alert("Email does not exists");
-        } else if (data.message === "Login Success") {
-          const response = await axios.get(
-            "http://localhost:8080/capstonecupid/user/getall"
-          );
-         
-          const loggedInUser = response.data.find(u => u.email === this.user.email && u.password === this.user.password);
-          console.log(loggedInUser);
+        const response = await AuthService.login(this.user);
+        console.log(response.data);
 
-          if (loggedInUser.userRole === "ADMIN"){
-            alert("Admin LogIn Successful");
-            this.$router.push({ name: "AdminView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
+        const { data } = response;
+
+        // if (data.token) {
+        //   localStorage.setItem("jwtToken", data.token);
+        // }
+
+        // save the jwt token
+        localStorage.setItem("jwt-token", data);
+
+        // use the jwt token to read the user logged in user
+        const userData = await axios.get(
+          "http://localhost:8080/capstonecupid/user/read",
+          {
+            headers: { Authorization: `Bearer ${data}` },
           }
-          else{
-            alert("User LogIn Successful");
-            this.$router.push({ name: "UserProfileView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
-          }  
+        );
+
+        const loggedInUser = userData.data;
+        console.log(loggedInUser);
+
+        if (loggedInUser) {
+          if (loggedInUser.userRole === "ADMIN") {
+            alert("Admin Login Successful");
+            this.$router.push({
+              name: "AdminView",
+              query: {
+                id: loggedInUser.id,
+                userName: loggedInUser.userName,
+              },
+            });
+          } else {
+            alert("User Login Successful");
+            this.$router.push({
+              name: "UserProfileView",
+              query: {
+                id: loggedInUser.id,
+                userName: loggedInUser.userName,
+              },
+            });
+          }
         } else {
-          alert("Incorrect Email or Password not match");
+          alert("User not found in the system");
         }
       } catch (err) {
         console.error("Error:", err);
         alert("Error, please try again");
       }
+
+      // try {
+      //   AuthService.login(this.user).then((response) => {
+      //     console.log(response.data);
+      //   });
+      // } catch (err) {
+      //   console.error("Error:", err);
+      //   alert("Error, please try again");
+      // }
     },
+
+    // async LoginData() {
+    //   try {
+    //     const response = await axios.post(
+    //       "http://localhost:8080/capstonecupid/user/login",
+    //       this.user
+    //     );
+    //     const { data } = response;
+
+    //     if (data.token) {
+    //       localStorage.setItem("jwtToken", data.token);
+
+    //       try {
+    //         const userResponse = await axios.get(
+    //           "http://localhost:8080/capstonecupid/user/getall",
+    //           {
+    //             headers: { Authorization: `Bearer ${data.token}` },
+    //           }
+    //         );
+
+    //         const loggedInUser = userResponse.data.find(
+    //           (u => u.userName === this.user.userName)
+    //         );
+
+    //         if (loggedInUser) {
+    //           if (loggedInUser.userRole === "ADMIN") {
+    //             alert("Admin Login Successful");
+    //             this.$router.push({
+    //               name: "AdminView",
+    //               query: {
+    //                 id: loggedInUser.id,
+    //                 userName: loggedInUser.userName,
+    //               },
+    //             });
+    //           } else {
+    //             alert("User Login Successful");
+    //             this.$router.push({
+    //               name: "UserProfileView",
+    //               query: {
+    //                 id: loggedInUser.id,
+    //                 userName: loggedInUser.userName,
+    //               },
+    //             });
+    //           }
+    //         } else {
+    //           alert("User not found in the system");
+    //         }
+    //       } catch (error) {
+    //         console.error("Error fetching user details:", error);
+    //         alert("Error fetching user details. Please try again.");
+    //       }
+    //     } else {
+    //       alert("Login failed. Please check your credentials.");
+    //     }
+    //   } catch (err) {
+    //     console.error("Login Error:", err);
+    //     if (err.response) {
+    //       // The request was made and the server responded with a status code
+    //       // that falls out of the range of 2xx
+    //       alert(
+    //         `Login failed: ${err.response.data.message || "Unknown error"}`
+    //       );
+    //     } else if (err.request) {
+    //       // The request was made but no response was received
+    //       alert("No response from server. Please try again later.");
+    //     } else {
+    //       // Something happened in setting up the request that triggered an Error
+    //       alert("Error setting up the request. Please try again.");
+    //     }
+    //   }
+    // },
+
+    // aria-describedby="emailHelp"
+    //   async LoginData() {
+    //     try {
+    //       const response = await axios.post(
+    //         "http://localhost:8080/capstonecupid/user/login",
+    //         this.user
+    //       );
+    //       // console.log(response);
+    //       const { data } = response;
+
+    //       if (data.token) {
+    //         // store jwt token in the local storage
+    //         localStorage.setItem("jwtToken", data.token);
+
+    //         // check the user role and redirect them to their respective pages
+    //         const userResponse = await axios.get("http://localhost:8080/capstonecupid/user/getall", {
+    //           headers: {Authorization: `Bearer ${data.token}` }
+    //         });
+
+    //         const loggedInUser = userResponse.data.find(u => u.userName === this.userName);
+
+    //         if (loggedInUser.userRole === "ADMIN") {
+    //           alert("Admin Login Successful");
+    //           this.$router.push( {name: "AdminView", query : {id: loggedInUser.id, userName: loggedInUser.userName} });
+    //         } else {
+    //           alert("User Login Successful");
+    //           this.$router.push( {name: "UserProfileView", query : {id: loggedInUser.id, userName: loggedInUser.userName} });
+    //         }
+    //       } else {
+    //         alert("Incorrect UserName or Password");
+    //       }
+
+    //       // console.log(data);
+    //       // if (data.message === "User name not exists") {
+    //       //   alert("Username does not exists");
+    //       // } else if (data.message === "Login Success") {
+    //       //   // const response = await axios.get(
+    //       //   //   "http://localhost:8080/capstonecupid/user/getall"
+    //       //   // );
+
+    //       //   // const loggedInUser = response.data.find(u => u.userName === this.user.userName && u.password === this.user.password);
+    //       //   // console.log(loggedInUser);
+
+    //       //   if (loggedInUser.userRole === "ADMIN"){
+    //       //     alert("Admin LogIn Successful");
+    //       //     this.$router.push({ name: "AdminView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
+    //       //   }
+    //       //   else{
+    //       //     alert("User LogIn Successful");
+    //       //     this.$router.push({ name: "UserProfileView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
+    //       //   }
+    //       // } else {
+    //       //   alert("Incorrect UserName or Password not match");
+    //       // }
+    //     } catch (err) {
+    //       console.error("Error:", err);
+    //       alert("Error, please try again");
+    //     }
+    //   },
+    // },
   },
 };
 </script>

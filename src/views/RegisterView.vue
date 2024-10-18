@@ -146,17 +146,17 @@ export default {
     };
   },
   methods: {
-    async fetchUsers() {
-      try {
-        const res = await axios.get(
-          "http://localhost:8080/capstonecupid/user/getall"
-        );
-        this.users = res.data;
-        console.log(res.data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    },
+    // async fetchUsers() {
+    //   try {
+    //     const res = await axios.get(
+    //       "http://localhost:8080/capstonecupid/user/getall"
+    //     );
+    //     this.users = res.data;
+    //     console.log(res.data);
+    //   } catch (error) {
+    //     console.error("Error fetching users:", error);
+    //   }
+    // },
     handleImageChange(event) {
       if (event.target.files.length > 0) {
         this.image = event.target.files[0];
@@ -193,7 +193,7 @@ export default {
 
       try {
         const res = await axios.post(
-          "http://localhost:8080/capstonecupid/user/create",
+          "http://localhost:8080/capstonecupid/user/register",
           usersData,
           {
             headers: {
@@ -219,9 +219,9 @@ export default {
       }
     },
   },
-  mounted() {
-    this.fetchUsers();
-  },
+  // mounted() {
+  //   this.fetchUsers();
+  // },
 };
 </script>
 
