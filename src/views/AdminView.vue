@@ -40,7 +40,7 @@
                   >
                 </li>
                 <li style="margin-top: 5px">
-                  <router-link to="/matches" style="font-weight: bold"
+                  <router-link to="/Adminmatch" style="font-weight: bold"
                     >MATCHES</router-link
                   >
                 </li>
@@ -148,6 +148,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: "AdminView",
   data() {
@@ -160,54 +161,103 @@ export default {
   created() {
     this.fetchUsers();
   },
+  // methods: {
+  //   fetchUsers() {
+  //     const token = localStorage.getItem("jwt-token");
+  //     fetch("http://localhost:8080/capstonecupid/user/getall")
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         this.users = data;
+  //       });
+  //   },
+  //   // editUser(id) {
+  //   //   this.$router.push({ name: "EditUserView", query: { id , userName} });
+  //   //   // this.$router.push({ name: "AdminView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
+  //   // },
+  //   editUser(id, adminId, adminUserName) {
+  //     // Pass userId and userName in query params to EditUserView
+  //     this.$router.push({
+  //       name: "EditUserView",
+  //       query: { id, adminId, adminUserName},
+  //     });
+  //   },
+  //   deleteUser(id) {
+  //     if (confirm("Are you sure you want to delete this user?")) {
+  //       fetch(`http://localhost:8080/capstonecupid/user/delete/${id}`, {
+  //         method: "DELETE",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //         .then((response) => {
+  //           console.log("Response status:", response.status); // Log the status code
+  //           console.log("Response OK:", response.ok); // Log the "ok" flag
+
+  //           if (response.ok || response.status === 204) {
+  //             alert("User deleted successfully");
+  //             this.fetchUsers(); // Refresh user list after deletion
+  //           } else {
+  //             alert("Failed to delete user");
+  //           }
+  //         })
+  //         .catch((error) => {
+  //           console.error("Error deleting user:", error);
+  //           alert("An error occurred while deleting the user.");
+  //         });
+  //     }
+  //   },
+  // },
   methods: {
-    fetchUsers() {
+  fetchUsers() {
+    const token = localStorage.getItem("jwt-token");
+    fetch("http://localhost:8080/capstonecupid/user/getall", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}` 
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        this.users = data;
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+        alert("An error occurred while fetching users.");
+      });
+  },
+
+  editUser(id, adminId, adminUserName) {
+    
+    this.$router.push({
+      name: "EditUserView",
+      query: { id, adminId, adminUserName },
+    });
+  },
+
+  deleteUser(id) {
       const token = localStorage.getItem("jwt-token");
 
-      fetch("http://localhost:8080/capstonecupid/user/getall", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          this.users = data;
-        });
-    },
-    // editUser(id) {
-    //   this.$router.push({ name: "EditUserView", query: { id , userName} });
-    //   // this.$router.push({ name: "AdminView", query: { id: loggedInUser.id, userName: loggedInUser.userName } });
-    // },
-    editUser(id, adminId, adminUserName) {
-      // Pass userId and userName in query params to EditUserView
-      this.$router.push({
-        name: "EditUserView",
-        query: { id, adminId, adminUserName},
-      });
-    },
-    deleteUser(id) {
       if (confirm("Are you sure you want to delete this user?")) {
-        fetch(`http://localhost:8080/capstonecupid/user/delete/${id}`, {
-          method: "DELETE",
+        axios.delete(`http://localhost:8080/capstonecupid/admin/delete/${id}`, {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         })
-          .then((response) => {
-            console.log("Response status:", response.status); // Log the status code
-            console.log("Response OK:", response.ok); // Log the "ok" flag
-
-            if (response.ok || response.status === 204) {
-              alert("User deleted successfully");
-              this.fetchUsers(); // Refresh user list after deletion
-            } else {
-              alert("Failed to delete user");
-            }
-          })
-          .catch((error) => {
-            console.error("Error deleting user:", error);
-            alert("An error occurred while deleting the user.");
-          });
+        .then((response) => {
+          console.log("Response status:", response.status);
+          if (response.status === 204) {
+            alert("User deleted successfully");
+            this.fetchUsers(); 
+          } else {
+            alert("Failed to delete user");
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting user:", error);
+          alert("An error occurred while deleting the user.");
+        });
       }
     },
 
