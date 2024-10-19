@@ -35,7 +35,9 @@
             >
               <ul class="nav navbar-nav mu-menu navbar-right">
                 <li style="margin-top: 5px">
-                  <router-link :to="{ path: '/dashboard', query: this.$route.query }" style="font-weight: bold"
+                  <router-link
+                    :to="{ path: '/dashboard', query: this.$route.query }"
+                    style="font-weight: bold"
                     >USERS</router-link
                   >
                 </li>
@@ -45,10 +47,12 @@
                   >
                 </li>
                 <li style="margin-top: 5px">
-                    <router-link to="/admin-potential-match" style="font-weight: bold"
-                      >POTENTIAL-MATCHES</router-link
-                    >
-                  </li>
+                  <router-link
+                    to="/admin-potential-match"
+                    style="font-weight: bold"
+                    >POTENTIAL-MATCHES</router-link
+                  >
+                </li>
                 <li
                   style="
                     margin-top: 10px;
@@ -66,9 +70,8 @@
                   </h6>
                 </li>
                 <li>
-                  <form action="/logout" style="display: inline">
+                  <form action="/logout" method="POST" style="display: inline">
                     <button
-                    @click = "logout"
                       type="submit"
                       class="btn btn-primary navbar-btn"
                       style="margin-left: 15px"
@@ -88,7 +91,7 @@
     <div class="center-container">
       <div class="center-content">
         <div class="my-4" style="text-align: center; padding-top: 160px">
-          <h3 style="color: #fff">User Profiles</h3>
+          <h3 style="color: #fff">Potential Matches</h3>
           <span class="mu-header-dot" style="background-color: #fff"></span>
         </div>
         <div
@@ -105,47 +108,62 @@
               >Add New User</router-link
             >
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Username</th>
-                <th>Firstname</th>
-                <th>Lastname</th>
-                <th>Email</th>
-                <th>Gender</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(user, index) in users" :key="user.id">
-                <td>{{ index + 1 }}</td>
-                <td>{{ user.userName }}</td>
-                <td>{{ user.firstName }}</td>
-                <td>{{ user.lastName }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.gender }}</td>
-                <td>{{ user.userRole }}</td>
-                <td>
-                  <button
-                    @click="editUser(user.id, adminId, adminUserName)"
-                    class="btn btn-primary navbar-btn"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    :disabled="Number(this.$route.query.id) === user.id"
-                    @click="deleteUser(user.id)"
-                    class="btn btn-danger navbar-btn"
-                    style="margin-left: 10px"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+          <div>
+            <h2>Matched</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>User 1</th>
+                  <th>User 2</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="match in matched" :key="match.id">
+                  <td>{{ match.user1.userName }}</td>
+                  <td>{{ match.user2.userName }}</td>
+                  <td>{{ match.matchStatus }}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h2>Pending</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>User 1</th>
+                  <th>User 2</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="match in pending" :key="match.id">
+                  <td>{{ match.user1.userName }}</td>
+                  <td>{{ match.user2.userName }}</td>
+                  <td>{{ match.matchStatus }}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h2>Rejected</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>User 1</th>
+                  <th>User 2</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="match in rejected" :key="match.id">
+                  <td>{{ match.user1.userName }}</td>
+                  <td>{{ match.user2.userName }}</td>
+                  <td>{{ match.matchStatus }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -154,19 +172,21 @@
 
 <script>
 import axios from 'axios';
-import AuthService from '@/AuthService';
 
 export default {
-  name: "AdminView",
+  name: "AdminMatchView",
   data() {
     return {
-      users: [],
+      potentialMatches: [],
+      matched: [],
+      pending: [],
+      rejected: [],
       adminId: this.$route.query.id,
       adminUserName: this.$route.query.userName,
     };
   },
   created() {
-    this.fetchUsers();
+    this.fetchPotentialMatches();
   },
   // methods: {
   //   fetchUsers() {
@@ -215,74 +235,91 @@ export default {
   //   },
   // },
   methods: {
-  fetchUsers() {
-    const token = localStorage.getItem("jwt-token");
-    fetch("http://localhost:8080/capstonecupid/user/getall", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}` 
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        this.users = data;
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error);
-        alert("Unauthorized! Please login.");
-      });
+    async fetchPotentialMatches() {
+      try {
+        const token = localStorage.getItem("jwt-token");
+        const response = await axios.get(
+          "http://localhost:8080/capstonecupid/api/potential-match/admin/getall",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        this.potentialMatches = response.data;
+        this.categorizeMatches();
+      } catch (error) {
+        console.error("Error fetching potential matches", error);
+      }
+    },
+    categorizeMatches() {
+      this.matched = this.potentialMatches.filter(
+        (match) => match.matchStatus === "MATCHED"
+      );
+      this.pending = this.potentialMatches.filter(
+        (match) => match.matchStatus === "PENDING"
+      );
+      this.rejected = this.potentialMatches.filter(
+        (match) => match.matchStatus === "REJECTED"
+      );
+    },
   },
 
-  editUser(id, adminId, adminUserName) {
-    
+  //     fetchMatches() {
+  //   const token = localStorage.getItem("jwt-token");
+  //   fetch("http://localhost:8080/capstonecupid/api/potential-match/admin/getall", {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //         console.log(data)
+  //       this.matches = data;
+  //       this.categorizeMatches();
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching matches:", error);
+  //       alert("An error occurred while fetching matches.");
+  //     });
+  // },
+
+  editMatch(id, adminId, adminUserName) {
     this.$router.push({
-      name: "EditUserView",
+      name: "EditMatchView",
       query: { id, adminId, adminUserName },
     });
   },
 
-  deleteUser(id) {
-      const token = localStorage.getItem("jwt-token");
+  //     deleteUser(id) {
+  //       const token = localStorage.getItem("jwt-token"); // Get the token from localStorage
 
-      if (confirm("Are you sure you want to delete this user?")) {
-        axios.delete(`http://localhost:8080/capstonecupid/user/admin/delete/${id}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("Response status:", response.status);
-          if (response.status === 204) {
-            alert("User deleted successfully");
-            this.fetchUsers(); 
-          } else {
-            alert("Failed to delete user");
-          }
-        })
-        .catch((error) => {
-          console.error("Error deleting user:", error);
-          alert("An error occurred while deleting the user.");
-        });
-      }
-    },
-
-    async logout() {
-      const token = localStorage.getItem("jwt-token");
-
-      try {
-        // call logout function from authservice
-        await AuthService.logout();
-
-        // redirect to home view on succesful logout
-        alert("Logged  out successfully");
-
-      } catch (error) {
-        console.error('Logout failed:', error);
-      }
-    },
-  },
+  //       if (confirm("Are you sure you want to delete this Match?")) {
+  //         fetch(`http://localhost:8080/capstonecupid/user/delete/${id}`, {
+  //           method: "DELETE",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${token}` // Add the Authorization header
+  //           },
+  //         })
+  //           .then((response) => {
+  //             console.log("Response status:", response.status);
+  //             if (response.ok || response.status === 204) {
+  //               alert("User deleted successfully");
+  //               this.fetchUsers(); // Refresh user list after deletion
+  //             } else {
+  //               alert("Failed to delete user");
+  //             }
+  //           })
+  //           .catch((error) => {
+  //             console.error("Error deleting user:", error);
+  //             alert("An error occurred while deleting the user.");
+  //           });
+  //       }
+  //     },
+  //   }
 };
 </script>
 

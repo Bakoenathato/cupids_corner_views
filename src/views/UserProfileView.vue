@@ -24,8 +24,13 @@
                 <li style="margin-top: 10px; margin-right: 20px;"><h6 style="color: #fff; display: inline;">Welcome: <i><span style="color: #000; margin-left: 10px;">{{this.$route.query.userName}}</span></i></h6></li>
                 <li><router-link to="/match" style="font-weight: bold">Matches</router-link></li>
                 <li>
-                  <form action="/logout" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-primary navbar-btn" style="margin-left: 15px;">
+                  <form action="/logout" style="display: inline">
+                    <button
+                    @click = "logout"
+                      type="submit"
+                      class="btn btn-primary navbar-btn"
+                      style="margin-left: 15px"
+                    >
                       Log Out
                     </button>
                   </form>
@@ -77,6 +82,7 @@
 
 <script>
 import axios from "axios";
+import AuthService from "@/AuthService";
 
 export default {
   name: "UserProfileView",
@@ -201,16 +207,34 @@ export default {
       })
       .then(response => {
         if (response.data) {
-          console.log(`Match created with user: ${user.id}`);
+          console.log(`Match created with user: ${user.userName}`);
+          //this.$emit(`match-created`, user);
+          alert(`It's a match with ${user.userName}`);
         } else {
-          console.log(`Swiped ${direction} on user: ${user.id}`);
+          console.log(`Swiped ${direction} on user: ${user.userName}`);
+          alert(`You swiped ${direction} on ${user.userName}.`);
         }
-        this.users = this.users.filter(u => u.id !== user.id);
+        this.users = this.users.filter(user => user.id !== user.id);
       })
       .catch(error => {
         console.error(`There was an error swiping ${direction}!`, error);
+        alert(`Failed to swipe ${direction} on ${user.userName}. Please try again.`);
       });
-  }
+  },
+  async logout() {
+      const token = localStorage.getItem("jwt-token");
+
+      try {
+        // call logout function from authservice
+        await AuthService.logout();
+
+        // redirect to home view on succesful logout
+        alert("Logged  out successfully");
+
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    },
 }
 };
 </script>

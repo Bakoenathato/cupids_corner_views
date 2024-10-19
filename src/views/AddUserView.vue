@@ -202,12 +202,14 @@ export default {
       };
 
       try {
+        const token = localStorage.getItem("jwt-token");
+
         const res = await axios.post(
-          "http://localhost:8080/capstonecupid/user/create",
+          "http://localhost:8080/capstonecupid/user/admin/create",
           usersData,
           {
             headers: {
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
           }
         );

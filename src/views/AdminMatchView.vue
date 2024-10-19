@@ -44,6 +44,11 @@
                       >MATCHES</router-link
                     >
                   </li>
+                  <li style="margin-top: 5px">
+                    <router-link to="/admin-potential-match" style="font-weight: bold"
+                      >POTENTIAL-MATCHES</router-link
+                    >
+                  </li>
                   <li
                     style="
                       margin-top: 10px;
@@ -106,11 +111,11 @@
       <th>Match ID</th>
       <th>User 1 Username</th>
       <th>User 1 Surname</th>
-      <th>User 1 First Name</th>
+      <!-- <th>User 1 First Name</th> -->
       <th>User 1 Gender</th>
       <th>User 2 Username</th>
       <th>User 2 Surname</th>
-      <th>User 2 First Name</th>
+      <!-- <th>User 2 First Name</th> -->
       <th>User 2 Gender</th>
       <th>Actions</th>
     </tr>
@@ -121,11 +126,11 @@
       <td>{{ match.matchId }}</td>
       <td>{{ match.user1Id.userName }}</td>
       <td>{{ match.user1Id.lastName }}</td>
-      <td>{{ match.user1Id.firstName }}</td>
+      <!-- <td>{{ match.user1Id.firstName }}</td> -->
       <td>{{ match.user1Id.gender }}</td>
       <td>{{ match.user2Id.userName }}</td>
-      <td>{{ match.user2Id.lastName }}</td>
-      <td>{{ match.user2Id.firstName }}</td>
+      <td>{{ match.user2Id.lastName }}</td>  
+      <!-- <td>{{ match.user2Id.firstName }}</td> -->
       <td>{{ match.user2Id.gender }}</td>
       <td>
         <!-- <button
@@ -153,7 +158,7 @@
   
   <script>
   export default {
-    name: "AdminView",
+    name: "AdminMatchView",
     data() {
       return {
         matches: [],

@@ -84,7 +84,7 @@ export default {
     async loginUser() {
       try {
         const response = await AuthService.login(this.user);
-        console.log(response.data);
+        //console.log(response.data);
 
         const { data } = response;
 
@@ -94,6 +94,7 @@ export default {
 
         // save the jwt token
         localStorage.setItem("jwt-token", data);
+        localStorage.setItem("token-expiry", data.expiryDate);
 
         // use the jwt token to read the user logged in user
         const userData = await axios.get(
@@ -104,7 +105,7 @@ export default {
         );
 
         const loggedInUser = userData.data;
-        console.log(loggedInUser);
+        //console.log(loggedInUser);
 
         if (loggedInUser) {
           if (loggedInUser.userRole === "ADMIN") {
