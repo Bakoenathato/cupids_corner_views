@@ -177,6 +177,13 @@
                       </i>
                     </h6>
                   </li>
+                  <li>
+  <router-link 
+    :to="{ path: '/user-profile', query: { user_id: user_id }}" 
+    style="font-weight: bold">
+    User Profile
+  </router-link>
+</li>
                 </ul>
               </div>
             </div>
@@ -230,6 +237,7 @@
         users: [],
         currentUser: this.$route.query.userName || localStorage.getItem("loggedInUserName"),
         matchedUsers: [], 
+        user_id: localStorage.getItem("loggedInUserid")
       };
     },
     computed: {

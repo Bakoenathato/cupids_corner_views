@@ -238,7 +238,7 @@ export default {
       const token = localStorage.getItem("jwt-token");
 
       if (confirm("Are you sure you want to delete this user?")) {
-        axios.delete(`http://localhost:8080/capstonecupid/admin/delete/${id}`, {
+        axios.delete(`http://localhost:8080/capstonecupid/user/admin/delete/${id}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

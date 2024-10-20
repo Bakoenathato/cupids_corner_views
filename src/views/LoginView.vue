@@ -92,10 +92,10 @@ export default {
         //   localStorage.setItem("jwtToken", data.token);
         // }
 
-        // save the jwt token
+       
         localStorage.setItem("jwt-token", data);
 
-        // use the jwt token to read the user logged in user
+      
         const userData = await axios.get(
           "http://localhost:8080/capstonecupid/user/read",
           {
@@ -116,6 +116,7 @@ export default {
                 userName: loggedInUser.userName,
               },
             });
+           
           } else {
             alert("User Login Successful");
             this.$router.push({
@@ -125,6 +126,8 @@ export default {
                 userName: loggedInUser.userName,
               },
             });
+            localStorage.setItem("loggedInUserName", loggedInUser.userName);
+            localStorage.setItem("loggedInUserid", loggedInUser.id);
           }
         } else {
           alert("User not found in the system");

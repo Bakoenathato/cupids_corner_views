@@ -157,7 +157,7 @@ export default {
   methods: {
   async fetchUsers() {
     try {
-      const id = Number(this.$route.query.id);
+      const id = Number(this.$route.query.id || localStorage.getItem("loggedInUserid"));
       const token = localStorage.getItem("jwt-token"); 
       const response = await axios.get("http://localhost:8080/capstonecupid/user/getall", {
         headers: {

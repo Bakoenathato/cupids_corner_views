@@ -179,7 +179,7 @@ export default {
         const token = localStorage.getItem("jwt-token"); 
         console.log(token)
         const res = await axios.get(
-      `http://localhost:8080/capstonecupid/user/read/${this.id}`,
+      `http://localhost:8080/capstonecupid/user/admin/read/${this.id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`, 
