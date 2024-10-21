@@ -1,0 +1,93 @@
+<script>
+import axios from "axios";
+import AuthService from "@/AuthService";
+
+export default {
+  name: "UserProfileView",
+  data() {
+    return {
+      users: [],
+      filteredUsers: [],
+      loggedInUser: null,
+    };
+  },
+  created() {
+    this.fetchUsers();
+  },
+  methods: {
+  async fetchUsers() {
+    try {
+      const id = Number(this.$route.query.id);
+      const token = localStorage.getItem("jwt-token"); 
+      const response = await axios.get("http://localhost:8080/capstonecupid/user/getall", {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      });
+      this.users = response.data;
+
+      this.loggedInUser = this.users.find(user => user.id === id);
+      this.filteredUsers = this.users.filter(user => user.id !== this.loggedInUser.id && user.gender !== this.loggedInUser.gender && user.userRole !== 'ADMIN');
+
+    } catch (error) {
+      console.error("Couldn't fetch users!", error);
+    }
+  },
+  swipeLeft(user) {
+    this.sendSwipeRequest(user, 'left');
+  },
+  swipeRight(user) {
+    this.sendSwipeRequest(user, 'right');
+  },
+  sendSwipeRequest(user, direction) {
+    const id = Number(this.$route.query.id);
+    const token = localStorage.getItem("jwt-token");
+
+    console.log('Swipe Data: ', {
+      user1Id: this.loggedInUser.id,
+      user2Id: user.id,
+      direction: direction
+    });
+
+    axios
+      .post('http://localhost:8080/capstonecupid/api/potential-match/process-swipe', {
+        user1Id: this.loggedInUser.id,
+        user2Id: user.id,
+        direction: direction,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      })
+      .then(response => {
+        if (response.data) {
+          console.log(`Match created with user: ${user.userName}`);
+          //this.$emit(`match-created`, user);
+          alert(`It's a match with ${user.userName}`);
+        } else {
+          console.log(`Swiped ${direction} on user: ${user.userName}`);
+          alert(`You swiped ${direction} on ${user.userName}.`);
+        }
+        this.users = this.users.filter(user => user.id !== user.id);
+      })
+      .catch(error => {
+        console.error(`There was an error swiping ${direction}!`, error);
+        alert(`Failed to swipe ${direction} on ${user.userName}. Please try again.`);
+      });
+  },
+  async logout() {
+      const token = localStorage.getItem("jwt-token");
+
+      try {
+        // call logout function from authservice
+        await AuthService.logout();
+
+        // redirect to home view on succesful logout
+        alert("Logged  out successfully");
+
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    },
+}
+};

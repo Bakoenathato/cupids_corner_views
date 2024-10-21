@@ -1,0 +1,63 @@
+export default {
+  name: "LoginView",
+  data() {
+    return {
+      user: {
+        userName: "",
+        password: "",
+      },
+    };
+  },
+  methods: {
+    async loginUser() {
+      try {
+        const response = await AuthService.login(this.user);
+        //console.log(response.data);
+
+        const { data } = response;
+
+        localStorage.setItem("jwt-token", data);
+        localStorage.setItem("token-expiry", data.exp);
+
+        const userData = await axios.get(
+          "http://localhost:8080/capstonecupid/user/read",
+          {
+            headers: { Authorization: `Bearer ${data}` },
+          }
+        );
+
+
+
+        const loggedInUser = userData.data;
+        console.log(loggedInUser);
+
+        if (loggedInUser) {
+
+          localStorage.setItem("user-role", loggedInUser.userRole);
+
+          if (loggedInUser.userRole === "ADMIN") {
+            alert("Admin Login Successful");
+            this.$router.push({
+              name: "AdminView",
+              query: {
+                id: loggedInUser.id,
+                userName: loggedInUser.userName,
+              },
+            });
+          } else {
+            alert("User Login Successful");
+            this.$router.push({
+              name: "UserProfileView",
+              query: {
+                id: loggedInUser.id,
+                userName: loggedInUser.userName,
+              },
+            });
+          }
+        } else {
+          alert("User not found in the system");
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        alert("Error, please try again");
+      }

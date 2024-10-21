@@ -21,12 +21,31 @@
               id="bs-example-navbar-collapse-1"
             >
               <ul class="nav navbar-nav mu-menu navbar-right">
-                <li style="margin-top: 10px; margin-right: 20px;"><h6 style="color: #fff; display: inline;">Welcome: <i><span style="color: #000; margin-left: 10px;">{{this.$route.query.userName}}</span></i></h6></li>
-                <li><router-link to="/match" style="font-weight: bold">Matches</router-link></li>
+                <li style="margin-top: 10px; margin-right: 20px">
+                  <h6 style="color: #fff; display: inline">
+                    WELCOME:
+                    <i
+                      ><span style="color: #000; margin-left: 10px">{{
+                         currentUser
+                      }}</span></i
+                    >
+                  </h6>
+                </li>
+                <li style="margin-top: 5px">
+                  <router-link to="/match" style="font-weight: bold"
+                    >MY MATCHES</router-link
+                  >
+                </li>
+                <li style="margin-top: 5px">
+                  <router-link to="/update-profile" style="font-weight: bold"
+                    >MY PROFILE</router-link
+                  >
+                </li>
+                <!-- <li><router-link to="/match" style="font-weight: bold">Matches</router-link></li>  -->
                 <li>
                   <form action="/logout" style="display: inline">
                     <button
-                    @click = "logout"
+                      @click="logout"
                       type="submit"
                       class="btn btn-primary navbar-btn"
                       style="margin-left: 15px"
@@ -44,12 +63,13 @@
     <div class="center-container">
       <div class="center-content">
         <div class="my-4" style="text-align: center; padding-top: 200px">
-          <h3 style="color: #fff;">
-            User Profiles
-          </h3>
+          <h3 style="color: #fff">User Profiles</h3>
           <span class="mu-header-dot" style="background-color: #fff"></span>
         </div>
-        <div class="container col-md-12" style="margin-top: 50px; margin-bottom: 50px;">
+        <div
+          class="container col-md-12"
+          style="margin-top: 50px; margin-bottom: 50px"
+        >
           <div
             v-for="user in filteredUsers"
             :key="user.id"
@@ -88,13 +108,19 @@ export default {
   name: "UserProfileView",
   data() {
     return {
+      currentUser: localStorage.getItem("user-name"),
       users: [],
       filteredUsers: [],
       loggedInUser: null,
     };
   },
   created() {
-    this.fetchUsers();
+    if (this.currentUser) {
+      this.fetchUsers();
+    } else {
+      alert("Please log in.");
+      this.$router.push({ name: "LoginView" });
+    }
   },
   // methods: {
   //   // async fetchUsers() {
@@ -106,10 +132,10 @@ export default {
   //   async fetchUsers() {
   // try {
   //   const id = Number(this.$route.query.id);
-  //   const token = localStorage.getItem("jwt-token"); 
+  //   const token = localStorage.getItem("jwt-token");
   //   const response = await axios.get("http://localhost:8080/capstonecupid/user/getall", {
   //     headers: {
-  //       Authorization: `Bearer ${token}`, 
+  //       Authorization: `Bearer ${token}`,
   //     },
   //   });
   //   this.users = response.data;
@@ -145,7 +171,7 @@ export default {
   //         direction: direction,
   //       }
   //     )
-      
+
   //       .then(response => {
   //         if (response.data) {
   //           console.log(`Match created with user: ${user.id}`);
@@ -161,67 +187,87 @@ export default {
   //   }
   // }
   methods: {
-  async fetchUsers() {
-    try {
+    async fetchUsers() {
+      const token = localStorage.getItem("jwt-token");
+      if (!token) {
+        alert("Please log in.");
+        this.$router.push({ name: "LoginView" });
+        return;
+      }
+
+      try {
+        const id = Number(this.$route.query.id || localStorage.getItem("loggedIn-userID"));
+        const token = localStorage.getItem("jwt-token");
+        const response = await axios.get(
+          "http://localhost:8080/capstonecupid/user/getall",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        this.users = response.data;
+
+        this.loggedInUser = this.users.find((user) => user.id === id);
+        this.filteredUsers = this.users.filter(
+          (user) =>
+            user.id !== this.loggedInUser.id &&
+            user.gender !== this.loggedInUser.gender &&
+            user.userRole !== "ADMIN"
+        );
+      } catch (error) {
+        console.error("Couldn't fetch users!", error);
+      }
+    },
+    swipeLeft(user) {
+      this.sendSwipeRequest(user, "left");
+    },
+    swipeRight(user) {
+      this.sendSwipeRequest(user, "right");
+    },
+    sendSwipeRequest(user, direction) {
       const id = Number(this.$route.query.id);
-      const token = localStorage.getItem("jwt-token"); 
-      const response = await axios.get("http://localhost:8080/capstonecupid/user/getall", {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      });
-      this.users = response.data;
+      const token = localStorage.getItem("jwt-token");
 
-      this.loggedInUser = this.users.find(user => user.id === id);
-      this.filteredUsers = this.users.filter(user => user.id !== this.loggedInUser.id && user.gender !== this.loggedInUser.gender && user.userRole !== 'ADMIN');
-
-    } catch (error) {
-      console.error("Couldn't fetch users!", error);
-    }
-  },
-  swipeLeft(user) {
-    this.sendSwipeRequest(user, 'left');
-  },
-  swipeRight(user) {
-    this.sendSwipeRequest(user, 'right');
-  },
-  sendSwipeRequest(user, direction) {
-    const id = Number(this.$route.query.id);
-    const token = localStorage.getItem("jwt-token");
-
-    console.log('Swipe Data: ', {
-      user1Id: this.loggedInUser.id,
-      user2Id: user.id,
-      direction: direction
-    });
-
-    axios
-      .post('http://localhost:8080/capstonecupid/api/potential-match/process-swipe', {
+      console.log("Swipe Data: ", {
         user1Id: this.loggedInUser.id,
         user2Id: user.id,
         direction: direction,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      })
-      .then(response => {
-        if (response.data) {
-          console.log(`Match created with user: ${user.userName}`);
-          //this.$emit(`match-created`, user);
-          alert(`It's a match with ${user.userName}`);
-        } else {
-          console.log(`Swiped ${direction} on user: ${user.userName}`);
-          alert(`You swiped ${direction} on ${user.userName}.`);
-        }
-        this.users = this.users.filter(user => user.id !== user.id);
-      })
-      .catch(error => {
-        console.error(`There was an error swiping ${direction}!`, error);
-        alert(`Failed to swipe ${direction} on ${user.userName}. Please try again.`);
       });
-  },
-  async logout() {
+
+      axios
+        .post(
+          "http://localhost:8080/capstonecupid/api/potential-match/process-swipe",
+          {
+            user1Id: this.loggedInUser.id,
+            user2Id: user.id,
+            direction: direction,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.data) {
+            console.log(`Match created with user: ${user.userName}`);
+            //this.$emit(`match-created`, user);
+            alert(`It's a match with ${user.userName}`);
+          } else {
+            console.log(`Swiped ${direction} on user: ${user.userName}`);
+            alert(`You swiped ${direction} on ${user.userName}.`);
+          }
+          this.users = this.users.filter((user) => user.id !== user.id);
+        })
+        .catch((error) => {
+          console.error(`There was an error swiping ${direction}!`, error);
+          alert(
+            `Failed to swipe ${direction} on ${user.userName}. Please try again.`
+          );
+        });
+    },
+    async logout() {
       const token = localStorage.getItem("jwt-token");
 
       try {
@@ -230,17 +276,15 @@ export default {
 
         // redirect to home view on succesful logout
         alert("Logged  out successfully");
-
       } catch (error) {
-        console.error('Logout failed:', error);
+        console.error("Logout failed:", error);
       }
     },
-}
+  },
 };
 </script>
 
 <style scoped>
-
 .center-container {
   display: flex;
   justify-content: center;

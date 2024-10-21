@@ -9,6 +9,7 @@ import EditUserView from "../views/EditUserView.vue"
 import MatchView from "../views/MatchView.vue";
 import AdminMatchView from "../views/AdminMatchView.vue";
 import AdminPotentialMatchView from "@/views/AdminPotentialMatchView.vue";
+import UserEditView from "@/views/UserEditView.vue";
 
 const routes = [
   {
@@ -75,7 +76,13 @@ const routes = [
     path: "/admin-potential-match",
     name: "AdminPotentialMatch",
     component: AdminPotentialMatchView,
-  }
+  },
+  {
+    path: "/update-profile",
+    name: "UserEditView",
+    component: UserEditView,
+    // props: route => ({ loggedInUser: route.params.loggedInUser })
+  },
 
 ];
 

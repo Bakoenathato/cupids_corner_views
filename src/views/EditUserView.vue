@@ -160,7 +160,7 @@ export default {
   name: "EditUserView",
   data() {
     return {
-      id: this.$route.query.id, 
+      id: this.$route.query.id,
       name: "",
       surname: "",
       username: "",
@@ -170,25 +170,25 @@ export default {
       role: "",
       image: null,
       imagePreview: null,
+      resizedImage: null,
       storedPassword: "",
     };
   },
   methods: {
     async fetchUserDetails() {
       try {
-        const token = localStorage.getItem("jwt-token"); 
-        console.log(token)
+        const token = localStorage.getItem("jwt-token");
+        console.log(token);
         const res = await axios.get(
-      `http://localhost:8080/capstonecupid/user/admin/read/${this.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      }
-    );
+          `http://localhost:8080/capstonecupid/user/admin/read/${this.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const user = res.data;
 
-        
         this.name = user.firstName;
         this.surname = user.lastName;
         this.username = user.userName;
@@ -198,26 +198,56 @@ export default {
         this.password = user.password;
         this.storedPassword = user.password;
 
-        
         if (user.displayImage) {
-          this.imagePreview = `data:image/jpeg;base64,${user.displayImage}`; 
+          this.imagePreview = `data:image/jpeg;base64,${user.displayImage}`;
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
     },
-    handleImageChange(event) {
+
+    async handleImageChange(event) {
       if (event.target.files.length > 0) {
         this.image = event.target.files[0];
 
-        
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.imagePreview = e.target.result; 
-        };
-        reader.readAsDataURL(this.image); 
+        // resizing the image before converting to Base64
+        this.resizedImage = await this.resizeImage(this.image, 842, 842);
+        const base64Image = await this.convertToBase64(this.resizedImage);
+        console.log("Image resized :)");
       }
     },
+
+    resizeImage(file, maxWidth, maxHeight) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          img.src = e.target.result;
+        };
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          // set canvas dimensions to 842x842
+          canvas.width = maxWidth;
+          canvas.width = maxHeight;
+
+          // draw the resized image on canvas
+          ctx.drawImage(img, 0, 0, maxWidth, maxHeight);
+
+          // convert the canvas to a blob
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, file.type);
+        };
+
+        img.onerror = (err) => reject(err);
+        reader.readAsDataURL(file);
+      });
+    },
+
     convertToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -226,6 +256,25 @@ export default {
         reader.readAsDataURL(file);
       });
     },
+    // handleImageChange(event) {
+    //   if (event.target.files.length > 0) {
+    //     this.image = event.target.files[0];
+
+    //     const reader = new FileReader();
+    //     reader.onload = (e) => {
+    //       this.imagePreview = e.target.result;
+    //     };
+    //     reader.readAsDataURL(this.image);
+    //   }
+    // },
+    // convertToBase64(file) {
+    //   return new Promise((resolve, reject) => {
+    //     const reader = new FileReader();
+    //     reader.onload = () => resolve(reader.result.split(",")[1]);
+    //     reader.onerror = (error) => reject(error);
+    //     reader.readAsDataURL(file);
+    //   });
+    // },
     async updateUser(event) {
       const confirmed = confirm(
         "Are you sure you want to update this user's information?"
@@ -237,10 +286,9 @@ export default {
 
       let hexImage = null;
       if (this.image) {
-        hexImage = await this.convertToBase64(this.image); 
+        hexImage = await this.convertToBase64(this.image);
       } else if (this.imagePreview) {
-        
-        hexImage = this.imagePreview.split(",")[1]; 
+        hexImage = this.imagePreview.split(",")[1];
       }
 
       const updatedUserData = {
@@ -252,7 +300,7 @@ export default {
         gender: this.gender,
         userRole: this.role,
         password: this.storedPassword,
-        displayImage: hexImage, 
+        displayImage: hexImage,
       };
 
       try {
@@ -262,14 +310,20 @@ export default {
           updatedUserData,
           {
             headers: {
-              "Content-Type": "application/json",
+              // "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
         );
         console.log("User updated:", res.data);
         alert("User successfully updated");
-        this.$router.push({ name: "AdminView", query: { id: this.$route.query.adminId, userName: this.$route.query.adminUserName } });
+        this.$router.push({
+          name: "AdminView",
+          query: {
+            id: this.$route.query.adminId,
+            userName: this.$route.query.adminUserName,
+          },
+        });
       } catch (error) {
         console.error("Error updating user:", error);
         alert("An error occurred while updating the user.");
@@ -277,7 +331,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchUserDetails(); 
+    this.fetchUserDetails();
   },
 };
 </script>

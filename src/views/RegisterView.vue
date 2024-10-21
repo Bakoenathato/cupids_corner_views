@@ -143,6 +143,7 @@ export default {
       gender: "",
       role: "USER",
       image: null,
+      resizedImage: null,
     };
   },
   methods: {
@@ -157,11 +158,49 @@ export default {
     //     console.error("Error fetching users:", error);
     //   }
     // },
-    handleImageChange(event) {
+    async handleImageChange(event) {
       if (event.target.files.length > 0) {
         this.image = event.target.files[0];
+
+        // resizing the image before converting to Base64
+        this.resizedImage = await this.resizeImage(this.image, 842, 842);
+        const base64Image = await this.convertToBase64(this.resizedImage);
+        console.log("Image resized :)");
       }
     },
+
+    resizeImage(file, maxWidth, maxHeight) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          img.src = e.target.result;
+        };
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          // set canvas dimensions to 842x842
+          canvas.width = maxWidth;
+          canvas.width = maxHeight;
+
+          // draw the resized image on canvas
+          ctx.drawImage(img, 0, 0, maxWidth, maxHeight);
+
+          // convert the canvas to a blob
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, file.type);
+        };
+
+        img.onerror = (err) => reject(err);
+        reader.readAsDataURL(file);
+      });
+    },
+
+
     convertToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -203,8 +242,8 @@ export default {
         );
 
         this.users = res.data;
-        console.log(res.data);
-        console.log(usersData);
+        // console.log(res.data);
+        // console.log(usersData);
         alert("Registration successful!");
         this.$router.push({ name: "LoginView" });
       } catch (error) {

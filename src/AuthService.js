@@ -10,6 +10,8 @@ class AuthService {
     logout() {
         // remove the token from localstorage
         localStorage.removeItem("jwt-token");
+        localStorage.removeItem("user-role");
+        localStorage.removeItem("token-expiry");
 
         return axios.post(`${API_BASE_URL}/logout`)
     }

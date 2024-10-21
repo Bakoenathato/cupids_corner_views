@@ -69,6 +69,7 @@
 <script>
 import axios from "axios";
 import AuthService from "@/AuthService";
+import { jwtDecode } from "jwt-decode";
 
 export default {
   name: "LoginView",
@@ -94,7 +95,11 @@ export default {
 
         // save the jwt token
         localStorage.setItem("jwt-token", data);
-        localStorage.setItem("token-expiry", data.expiryDate);
+        localStorage.setItem("token-expiry", data.exp);
+        // localStorage.setItem("user-Info", JSON.stringify({
+        //   id: loggedInUser.id,
+        //   userName: loggedInUser.userName
+        // }));
 
         // use the jwt token to read the user logged in user
         const userData = await axios.get(
@@ -105,9 +110,32 @@ export default {
         );
 
         const loggedInUser = userData.data;
-        //console.log(loggedInUser);
+        console.log(loggedInUser);
 
         if (loggedInUser) {
+          // localStorage.setItem("user-role", loggedInUser.userRole);
+
+          localStorage.setItem(
+            "user-name", loggedInUser.userName
+            // JSON.stringify({
+            //   userName: loggedInUser.userName,
+            // })
+          );
+
+          localStorage.setItem(
+            "user-id", loggedInUser.id
+            // JSON.stringify({
+            //   id: loggedInUser.id,
+            // })
+          );
+
+          localStorage.setItem(
+            "user-role", loggedInUser.userRole
+            // JSON.stringify({
+            //   userRole: loggedInUser.userRole,
+            // })
+          );
+
           if (loggedInUser.userRole === "ADMIN") {
             alert("Admin Login Successful");
             this.$router.push({
@@ -126,6 +154,8 @@ export default {
                 userName: loggedInUser.userName,
               },
             });
+            localStorage.setItem("loggedIn-userName", loggedInUser.userName);
+            localStorage.setItem("loggedIn-userID", loggedInUser.id);
           }
         } else {
           alert("User not found in the system");
